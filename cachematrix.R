@@ -6,6 +6,9 @@
 
 makeCacheMatrix <- function(x = matrix()) {
   inv.x <- NULL
+  # The set function sets the matrix and
+  # initializes the inverse to NULL
+  # in the function's environment
   set <- function(y) {
       x <<- y
       inv.x <<- NULL
@@ -13,6 +16,8 @@ makeCacheMatrix <- function(x = matrix()) {
   get <- function() x
   setinv <- function(inverse.x) inv.x <<- inverse.x
   getinv <- function() inv.x
+  # Return a list containing the getter and
+  # setter functions
   list(set = set, get = get, 
        setinv = setinv,
        getinv = getinv)
@@ -26,12 +31,15 @@ makeCacheMatrix <- function(x = matrix()) {
 ## This approach is sometimes termed "memoization"
 
 cacheSolve <- function(x, ...) {
-    ## Return a matrix that is the inverse of 'x'
+    # If the inverse has already been cached
+    # return the cached version
     my.inv <- x$getinv()
     if (!is.null(my.inv)) {
         message("using cached inverse")
         return(my.inv)
     }
+    # Othwerwise, get the matrix
+    # then compute and cache the inverse
     inmat <- x$get()
     # Per instructions, we'll assume matrix is invertible
     my.inv <- solve(inmat, ...)
