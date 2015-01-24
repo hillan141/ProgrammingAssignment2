@@ -1,8 +1,8 @@
-## Put comments here that give an overall description of what your
-## functions do
+## R programming Assignment 2
+## AH, 24 January 2015
 
-## This function prepares a memoization object
-## for a matrix inverse
+## This function prepares an object that
+## will be used to cache a matrix inverse
 
 makeCacheMatrix <- function(x = matrix()) {
   inv.x <- NULL
@@ -14,13 +14,34 @@ makeCacheMatrix <- function(x = matrix()) {
   setinv <- function(inverse.x) inv.x <<- inverse.x
   getinv <- function() inv.x
   list(set = set, get = get, 
-       setmean = setmean,
-       getmean = getmean)
+       setinv = setinv,
+       getinv = getinv)
 }
 
 
-## Write a short comment describing this function
+## This function returns the matrix inverse.
+## It uses the cached inverse if it's been 
+## previously computed; otherwise, it will compute
+## and cache the inverse.
+## This approach is sometimes termed "memoization"
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+    ## Return a matrix that is the inverse of 'x'
+    my.inv <- x$getinv()
+    if (!is.null(my.inv)) {
+        message("using cached inverse")
+        return(my.inv)
+    }
+    inmat <- x$get()
+    # Per instructions, we'll assume matrix is invertible
+    my.inv <- solve(inmat, ...)
+    x$setinv(my.inv)
+    my.inv
 }
+
+# Here is an example of how to test the above functions
+# Create a 1000x1000 matrix
+# mm <- diag(1000)*.025
+# xo <- makeCacheMatrix(mm) # prepare the cache object
+# system.time(cs <- cacheSolve(xo)) # time the inverse calculation (first time)
+# system.time(cs <- cacheSolve(xo)) # time the inverse (from cache); faster
